@@ -60,6 +60,7 @@ make						\
 	FLINT_GMP_INCLUDE_DIR=%{_includedir}	\
 	FLINT_LIB=libflint.so			\
 	FLINT_VERSION=%{version}		\
+	FLINT_TUNE=-fPIC			\
 	library all
 
 %install
