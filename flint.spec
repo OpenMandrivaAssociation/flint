@@ -6,7 +6,7 @@
 Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
-Summary:	FLINT is a C library for doing number theory
+Summary:	FLINT - Fast Library for Number Theory
 Version:	1.0.21
 Release:	%mkrel 1
 Source:		http://www.flintlib.org/flint-1.0.21.tar.gz
@@ -26,8 +26,8 @@ Patch0:		flint-1.0.21-soname.patch
 Patch1:		flint-1.0.21-dynlink.patch
 
 %description
-FLINT is a C library for doing number theory,
-written by William Hart and David Harvey.
+FLINT - Fast Library for Number Theory. FLINT is a C library for
+doing number theory, written by William Hart and David Harvey.
 
 %package	-n %{libname}
 Group:		System/Libraries
