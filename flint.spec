@@ -8,7 +8,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	FLINT - Fast Library for Number Theory
 Version:	1.0.21
-Release:	%mkrel 1
+Release:	%mkrel 2
 Source:		http://www.flintlib.org/flint-1.0.21.tar.gz
 URL:		http://www.flintlib.org/
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -24,6 +24,10 @@ Patch0:		flint-1.0.21-soname.patch
 
 # Link applications with the generated dynamic library instead of the .o files
 Patch1:		flint-1.0.21-dynlink.patch
+
+# Link ntl interface in libflint.so; this interface is required by
+# sage python modules.
+Patch2:		flint-1.0.21-ntl.patch
 
 %description
 FLINT - Fast Library for Number Theory. FLINT is a C library for
@@ -50,12 +54,14 @@ This package contains the FLINT development headers and libraries.
 
 %patch0	-p1
 %patch1 -p1
+%patch2 -p1
 
 %build
 make						\
 	LIBDIR=%{_libdir}			\
 	INCLUDEDIR=%{_includedir}		\
 	DOCDIR=%{_docdir}/%{name}-%{version}	\
+	FLINT_NTL_LIB_DIR=%{_libdir}		\
 	FLINT_GMP_LIB_DIR=%{_libdir}		\
 	FLINT_GMP_INCLUDE_DIR=%{_includedir}	\
 	FLINT_LIB=libflint.so			\
