@@ -8,7 +8,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	FLINT - Fast Library for Number Theory
 Version:	1.0.21
-Release:	%mkrel 4
+Release:	%mkrel 5
 Source:		http://www.flintlib.org/flint-1.0.21.tar.gz
 URL:		http://www.flintlib.org/
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -44,6 +44,7 @@ This package contains the shared FLINT libraries.
 %package	-n lib%{name}-devel
 Group:		Development/C
 Summary:	FLINT Development files
+Requires:	lib%{name} = %{version}-%{release}
 Provides:	%{name}-devel = %{version}-%{release}
 
 %description	-n lib%{name}-devel
