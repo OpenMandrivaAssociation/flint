@@ -8,7 +8,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	FLINT - Fast Library for Number Theory
 Version:	1.0.21
-Release:	%mkrel 5
+Release:	%mkrel 6
 Source:		http://www.flintlib.org/flint-1.0.21.tar.gz
 URL:		http://www.flintlib.org/
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -81,6 +81,9 @@ cp -fa libflint* %{buildroot}/%{_libdir}
 mkdir -p %{buildroot}/%{_includedir}/%{name}
 cp -fa *.h %{buildroot}/%{_includedir}/%{name}
 
+# sagemath expects it this way
+ln -sf %{_includedir}/%{name} %{buildroot}%{_includedir}/FLINT
+
 cp -far graphing  %{buildroot}/%{flintdir}
 cp -far pari-profiles %{buildroot}/%{flintdir}
 
@@ -102,6 +105,7 @@ rm -rf %{buildroot}
 %files		-n lib%{name}-devel
 %defattr(-,root,root)
 %{_libdir}/libflint.so
+%{_includedir}/FLINT
 %dir %{_includedir}/%{name}
 %{_includedir}/%{name}/*
 %doc CHANGES.txt
