@@ -7,27 +7,33 @@ Name:		%{name}
 Group:		Sciences/Mathematics
 License:	GPL
 Summary:	FLINT - Fast Library for Number Theory
-Version:	1.0.21
-Release:	%mkrel 6
-Source:		http://www.flintlib.org/flint-1.0.21.tar.gz
+Version:	1.3.0
+Release:	%mkrel 1
+Source:		http://www.flintlib.org/flint-%{version}.tar.gz
 URL:		http://www.flintlib.org/
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 
 BuildRequires:	libgmp-devel
 BuildRequires:	ntl-devel
 BuildRequires:	python
+# Not really, as it has a copy of it in the sources
+BuildRequires:	libzn_poly-static-devel
+
 Requires:	pari
 Requires:	python-matplotlib
 
 # Based on sagemath & debian package
-Patch0:		flint-1.0.21-soname.patch
+Patch0:		flint-1.3.0-soname.patch
 
 # Link applications with the generated dynamic library instead of the .o files
-Patch1:		flint-1.0.21-dynlink.patch
+Patch1:		flint-1.3.0-dynlink.patch
 
 # Link ntl interface in libflint.so; this interface is required by
 # sage python modules.
-Patch2:		flint-1.0.21-ntl.patch
+Patch2:		flint-1.3.0-ntl.patch
+
+# Correct include path of zn_poly headers
+Patch3:		flint-1.3.0-zn_poly.patch
 
 %description
 FLINT - Fast Library for Number Theory. FLINT is a C library for
@@ -56,6 +62,7 @@ This package contains the FLINT development headers and libraries.
 %patch0	-p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
 
 %build
 make						\
