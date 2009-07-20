@@ -17,7 +17,7 @@ BuildRequires:	libgmp-devel
 BuildRequires:	ntl-devel
 BuildRequires:	python
 # Not really, as it has a copy of it in the sources
-BuildRequires:	libzn_poly-static-devel
+BuildRequires:	zn_poly-static-devel
 
 Requires:	pari
 Requires:	python-matplotlib
