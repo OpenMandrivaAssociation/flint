@@ -8,7 +8,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	FLINT - Fast Library for Number Theory
 Version:	1.5.0
-Release:	%mkrel 1
+Release:	%mkrel 2
 Source:		http://www.flintlib.org/flint-%{version}.tar.gz
 URL:		http://www.flintlib.org/
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -16,8 +16,6 @@ BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires:	libgmp-devel
 BuildRequires:	ntl-devel
 BuildRequires:	python
-# Not really, as it has a copy of it in the sources
-BuildRequires:	zn_poly-static-devel
 
 Requires:	pari
 Requires:	python-matplotlib
