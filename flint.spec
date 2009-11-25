@@ -30,9 +30,6 @@ Patch1:		flint-1.5.0-dynlink.patch
 # sage python modules.
 Patch2:		flint-1.5.0-ntl.patch
 
-# Correct include path of zn_poly headers
-Patch3:		flint-1.5.0-zn_poly.patch
-
 %description
 FLINT - Fast Library for Number Theory. FLINT is a C library for
 doing number theory, written by William Hart and David Harvey.
@@ -60,7 +57,6 @@ This package contains the FLINT development headers and libraries.
 %patch0	-p1
 %patch1 -p1
 %patch2 -p1
-%patch3 -p1
 
 %build
 make						\
@@ -83,6 +79,7 @@ cp -fa `find . -maxdepth 1 -mindepth 1 -type f -executable | grep -v libflint` \
 mkdir -p %{buildroot}/%{_libdir}
 cp -fa libflint* %{buildroot}/%{_libdir}
 
+perl -pi -e 's|(#include "zn_poly/)src/(zn_poly.h")|$1$2|;' *.h
 mkdir -p %{buildroot}/%{_includedir}/%{name}
 cp -fa *.h %{buildroot}/%{_includedir}/%{name}
 
