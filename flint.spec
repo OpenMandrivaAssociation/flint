@@ -8,7 +8,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	FLINT - Fast Library for Number Theory
 Version:	1.5.0
-Release:	%mkrel 3
+Release:	%mkrel 4
 Source:		http://www.flintlib.org/flint-%{version}.tar.gz
 URL:		http://www.flintlib.org/
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
