@@ -8,7 +8,7 @@ Group:		Sciences/Mathematics
 License:	GPL
 Summary:	FLINT - Fast Library for Number Theory
 Version:	1.5.0
-Release:	%mkrel 5
+Release:	%mkrel 6
 Source:		http://www.flintlib.org/flint-%{version}.tar.gz
 URL:		http://www.flintlib.org/
 BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
@@ -16,6 +16,7 @@ BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
 BuildRequires:	libgmp-devel
 BuildRequires:	ntl-devel
 BuildRequires:	python
+BuildRequires:	zn_poly-devel
 
 Requires:	pari
 Requires:	python-matplotlib
@@ -29,6 +30,8 @@ Patch1:		flint-1.5.0-dynlink.patch
 # Link ntl interface in libflint.so; this interface is required by
 # sage python modules.
 Patch2:		flint-1.5.0-ntl.patch
+
+Patch3:		flint-1.5.0-zn_poly.patch
 
 %description
 FLINT - Fast Library for Number Theory. FLINT is a C library for
@@ -57,6 +60,8 @@ This package contains the FLINT development headers and libraries.
 %patch0	-p1
 %patch1 -p1
 %patch2 -p1
+%patch3 -p1
+rm -fr zn_poly
 
 %build
 make						\
