@@ -1,0 +1,33 @@
+diff -p -up flint-1.5.0/makefile.orig flint-1.5.0/makefile
+--- flint-1.5.0/makefile.orig	2009-11-25 19:33:38.111076206 -0200
++++ flint-1.5.0/makefile	2009-11-25 19:35:20.744079236 -0200
+@@ -22,9 +22,7 @@ endif
+ 
+ CPP = $(FLINT_CPP) 
+ 
+-LIBS = -L$(FLINT_GMP_LIB_DIR) $(FLINT_LINK_OPTIONS) -lgmp -lpthread -lm
+-
+-LIBS2 = -L$(FLINT_GMP_LIB_DIR) -L$(FLINT_NTL_LIB_DIR) $(FLINT_LINK_OPTIONS) -lgmp -lpthread -lntl -lm 
++LIBS = -L$(FLINT_GMP_LIB_DIR) -L$(FLINT_NTL_LIB_DIR) $(FLINT_LINK_OPTIONS) -lgmp -lpthread -lntl -lm -lstdc++
+ 
+ ifndef FLINT_NTL_INCLUDE_DIR
+ 	INCS = -I$(FLINT_GMP_INCLUDE_DIR) 
+@@ -109,7 +107,8 @@ FLINTOBJ = \
+ 	poly.o \
+ 	sieve.o \
+ 	linear_algebra.o \
+-	block_lanczos.o
++	block_lanczos.o \
++	NTL-interface.o
+ 
+ QS: mpQS
+ 
+@@ -394,7 +393,7 @@ F_mpz_poly-test: F_mpz_poly-test.o test-
+ 	$(CC) $(CFLAGS) F_mpz_poly-test.o test-support.o -o F_mpz_poly-test $(FLINT_LIB) $(LIBS)
+ 
+ NTL-interface-test: NTL-interface.o NTL-interface-test.o test-support.o $(FLINT_LIB) $(HEADERS)
+-	$(CPP) $(CFLAGS) NTL-interface-test.o NTL-interface.o test-support.o $(FLINT_LIB) -o NTL-interface-test $(LIBS2)
++	$(CPP) $(CFLAGS) NTL-interface-test.o NTL-interface.o test-support.o $(FLINT_LIB) -o NTL-interface-test $(LIBS)
+ 
+ ####### tuning program object files
+ 
