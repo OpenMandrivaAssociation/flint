@@ -236,3 +236,13 @@
  }
    
  /*==========================================================================
+--- ./flint.h.orig	2013-07-29 16:55:20.052911589 -0300
++++ ./flint.h	2013-07-29 16:56:18.697910510 -0300
+@@ -142,6 +142,7 @@ Cache size in bytes.
+ 
+ #define FLINT_POL_DIV_1_LENGTH 10
+ 
++#undef ulong
+ typedef unsigned long ulong;
+ 
+ #if FLINT_BITS == 32

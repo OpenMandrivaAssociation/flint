@@ -3,7 +3,7 @@
 
 Name:           flint
 Version:        1.6
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Fast Library for Number Theory
 License:        GPLv2+
 URL:            http://www.flintlib.org/
