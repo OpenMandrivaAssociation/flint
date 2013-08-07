@@ -1,0 +1,171 @@
+diff -up ./configure.orig ./configure
+--- ./configure.orig	2013-08-01 20:46:20.753615620 -0300
++++ ./configure	2013-08-01 20:46:24.087615748 -0300
+@@ -100,6 +100,9 @@ while [ "$1" != "" ]; do
+          FLINT_CPIMPORT_DIR="$PREFIX/share/flint"
+          FLINT_CPIMPORT="$FLINT_CPIMPORT_DIR/CPimport.txt"
+          ;;
++      --libdir)
++         LIBDIR=$VALUE
++         ;;
+       --enable-shared)
+          SHARED=1
+          ;;
+@@ -142,6 +145,9 @@ while [ "$1" != "" ]; do
+       CFLAGS)
+          CFLAGS="$VALUE"
+          ;;
++      CXXFLAGS)
++         CXXFLAGS="$VALUE"
++         ;;
+       ABI)
+          ABI="$VALUE"
+          ;;
+@@ -157,15 +163,12 @@ done
+ 
+ LIBS="m"
+ 
+-if [ -d "${GMP_DIR}/lib" ]; then
+-   GMP_LIB_DIR="${GMP_DIR}/lib"
+-   GMP_INC_DIR="${GMP_DIR}/include"
+-elif [ -d "${GMP_DIR}/lib64" ]; then
+-   GMP_LIB_DIR="${GMP_DIR}/lib64"
+-   GMP_INC_DIR="${GMP_DIR}/include"
+-elif [ -d "${GMP_DIR}/.libs" ]; then
++if [ -d "${GMP_DIR}/.libs" ]; then
+    GMP_LIB_DIR="${GMP_DIR}/.libs"
+    GMP_INC_DIR="${GMP_DIR}"
++elif [ -d "${GMP_DIR}" ]; then
++   GMP_LIB_DIR="${GMP_DIR}"
++   GMP_INC_DIR="${GMP_DIR}/../include"
+ else
+    echo "Invalid GMP directory"
+    exit 1
+@@ -174,18 +177,12 @@ LIB_DIRS="${LIB_DIRS} ${GMP_LIB_DIR}"
+ INC_DIRS="${INC_DIRS} ${GMP_INC_DIR}"
+ LIBS="gmp ${LIBS}"
+ 
+-if [ -d "${MPFR_DIR}/lib" ]; then
+-   MPFR_LIB_DIR="${MPFR_DIR}/lib"
+-   MPFR_INC_DIR="${MPFR_DIR}/include"
+-elif [ -d "${MPFR_DIR}/lib64" ]; then
+-   MPFR_LIB_DIR="${MPFR_DIR}/lib64"
+-   MPFR_INC_DIR="${MPFR_DIR}/include"
+-elif [ -d "${MPFR_DIR}/.libs" ]; then
+-   MPFR_LIB_DIR="${MPFR_DIR}/.libs"
+-   MPFR_INC_DIR="${MPFR_DIR}"
+-elif [ -d "${MPFR_DIR}/src/.libs" ]; then
++if [ -d "${MPFR_DIR}/src/.libs" ]; then
+    MPFR_LIB_DIR="${MPFR_DIR}/src/.libs"
+    MPFR_INC_DIR="${MPFR_DIR}/src"
++elif [ -d "${MPFR_DIR}" ]; then
++   MPFR_LIB_DIR="${MPFR_DIR}"
++   MPFR_INC_DIR="${MPFR_DIR}/../include"
+ else
+    echo "Invalid MPFR directory"
+    exit 1
+@@ -197,12 +194,9 @@ LIBS="mpfr ${LIBS}"
+ #configure extra libraries
+ 
+ if [ "$WANT_NTL" = "1" ]; then
+-   if [ -d "${NTL_DIR}/lib" ]; then
+-      NTL_LIB_DIR="${NTL_DIR}/lib"
+-      NTL_INC_DIR="${NTL_DIR}/include"
+-   elif [ -d "${NTL_DIR}/lib64" ]; then
+-      NTL_LIB_DIR="${NTL_DIR}/lib64"
+-      NTL_INC_DIR="${NTL_DIR}/include"
++   if [ -d "${NTL_DIR}" ]; then
++      NTL_LIB_DIR="${NTL_DIR}"
++      NTL_INC_DIR="${NTL_DIR}/../include"
+    else
+       echo "Invalid NTL directory"
+       exit 1
+@@ -524,6 +518,7 @@ echo "FLINT_SHARED=$SHARED" >> Makefile
+ echo "FLINT_LIB=$FLINT_LIB" >> Makefile
+ echo "EXEEXT=$EXEEXT" >> Makefile
+ echo "PREFIX=$PREFIX" >> Makefile
++echo "LIBDIR=$LIBDIR" >> Makefile
+ echo "" >> Makefile
+ echo "WANT_NTL=$WANT_NTL" >> Makefile
+ echo "" >> Makefile
+@@ -539,6 +534,7 @@ echo "CXX=$CXX" >> Makefile
+ echo "AR=$AR" >> Makefile
+ echo "" >> Makefile
+ echo "CFLAGS=$CFLAGS" >> Makefile
++echo "CXXFLAGS=$CXXFLAGS" >> Makefile
+ echo "ABI_FLAG=$ABI_FLAG" >> Makefile
+ echo "PIC_FLAG=$PIC_FLAG" >> Makefile
+ echo "" >> Makefile
+diff -up ./flint.h.orig ./flint.h
+--- ./flint.h.orig	2013-08-01 20:46:20.763615621 -0300
++++ ./flint.h	2013-08-01 20:46:24.090615748 -0300
+@@ -202,9 +202,9 @@ void mpn_tdiv_q(mp_ptr qp,
+ 	   mp_srcptr np, mp_size_t nn,
+ 	   mp_srcptr dp, mp_size_t dn)
+     {
+-    mp_ptr _scratch = flint_malloc(dn * sizeof(mp_limb_t));
++    mp_ptr _scratch = (mp_ptr)flint_malloc(dn * sizeof(mp_limb_t));
+     mpn_tdiv_qr(qp, _scratch, 0, np, nn, dp, dn);
+-    flint_free(_scratch);
++    flint_free((void *)_scratch);
+     }
+ #endif
+ 
+diff -up ./Makefile.in.orig ./Makefile.in
+--- ./Makefile.in.orig	2013-08-01 20:46:20.758615621 -0300
++++ ./Makefile.in	2013-08-01 20:46:55.454616949 -0300
+@@ -92,10 +92,10 @@ $(FLINT_LIB): $(LOBJS) $(LIB_SOURCES) $(
+ 	$(AT)$(foreach dir, $(BUILD_DIRS), mkdir -p build/$(dir); export BUILD_DIR=../build/$(dir); export MOD_DIR=$(dir); $(MAKE) -f ../Makefile.subdirs -C $(dir) shared || exit $$?;)
+ 	$(AT)if [ "$(WANT_NTL)" -eq "1" ]; then \
+ 	  $(MAKE) build/interfaces/NTL-interface.lo; \
+-	  $(CXX) $(ABI_FLAG) -shared build/interfaces/NTL-interface.lo $(LOBJS) $(MOD_LOBJS) $(EXT_OBJS) $(LIBS2) -o $(FLINT_LIB); \
++	  $(CXX) $(ABI_FLAG) -shared build/interfaces/NTL-interface.lo $(LOBJS) $(MOD_LOBJS) $(LIBS2) -o $(FLINT_LIB) -Wl,-h,$(FLINT_LIB); \
+ 	fi
+ 	$(AT)if [ "$(WANT_NTL)" -ne "1" ]; then \
+-	  $(CC) $(ABI_FLAG) -shared $(LOBJS) $(MOD_LOBJS) $(EXT_OBJS) $(LIBS2) -o $(FLINT_LIB); \
++	  $(CC) $(ABI_FLAG) -shared $(LOBJS) $(MOD_LOBJS) $(LIBS2) -o $(FLINT_LIB) -Wl,-h,$(FLINT_LIB); \
+ 	fi
+ 
+ libflint.a: $(OBJS) $(LIB_SOURCES) $(EXT_SOURCES) $(HEADERS) $(EXT_HEADERS) | build build/interfaces
+@@ -150,18 +150,21 @@ else
+ endif
+ 
+ install: library
+-	mkdir -p $(DESTDIR)$(PREFIX)/lib
++	mkdir -p $(DESTDIR)$(LIBDIR)
+ 	mkdir -p $(DESTDIR)$(PREFIX)/include/flint
+ 	$(AT)if [ "$(FLINT_SHARED)" -eq "1" ]; then \
+-		cp $(FLINT_LIB) $(DESTDIR)$(PREFIX)/lib; \
++		cp $(FLINT_LIB) $(DESTDIR)$(LIBDIR); \
+ 	fi
+ 	$(AT)if [ "$(FLINT_STATIC)" -eq "1" ]; then \
+-		cp libflint.a $(DESTDIR)$(PREFIX)/lib; \
++		cp libflint.a $(DESTDIR)$(LIBDIR); \
+ 	fi
+ 	cp $(HEADERS) $(DESTDIR)$(PREFIX)/include/flint
+ 	$(AT)if [ ! -z $(EXT_HEADERS) ]; then \
+ 		cp $(EXT_HEADERS) $(DESTDIR)$(PREFIX)/include/flint; \
+ 	fi
++	$(AT)if [ "$(WANT_NTL)" -eq "1" ]; then \
++		cp NTL-interface.h $(DESTDIR)$(PREFIX)/include/flint; \
++	fi
+ 	mkdir -p $(DESTDIR)$(FLINT_CPIMPORT_DIR)
+ 	cp qadic/CPimport.txt $(DESTDIR)$(FLINT_CPIMPORT_DIR)
+ 
+@@ -184,13 +187,13 @@ build/interfaces:
+ 	mkdir -p build/interfaces
+ 
+ build/interfaces/NTL-interface.lo: interfaces/NTL-interface.cpp
+-	$(QUIET_CXX) $(CXX) $(PIC_FLAG) $(CFLAGS) $(INCS) -c $< -o $@;
++	$(QUIET_CXX) $(CXX) $(PIC_FLAG) $(CXXFLAGS) $(INCS) -c $< -o $@;
+ 
+ build/interfaces/NTL-interface.o: interfaces/NTL-interface.cpp
+-	$(QUIET_CXX) $(CXX) $(CFLAGS) $(INCS) -c $< -o $@;
++	$(QUIET_CXX) $(CXX) $(CXXFLAGS) $(INCS) -c $< -o $@;
+ 
+ build/interfaces/test/t-NTL-interface$(EXEEXT): interfaces/test/t-NTL-interface.cpp
+-	$(QUIET_CXX) $(CXX) $(CFLAGS) $(INCS) $< build/interfaces/NTL-interface.o -o $@ $(LIBS);
++	$(QUIET_CXX) $(CXX) $(CXXFLAGS) $(INCS) $< build/interfaces/NTL-interface.o -o $@ $(LIBS);
+ 
+ .PHONY: profile library shared static clean examples tune check tests distclean dist install all
+ 
