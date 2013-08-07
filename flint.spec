@@ -86,6 +86,10 @@ sed -e 's|#include <mpir.h>|#include <gmp.h>|' \
     -i  `find . -name \*.c -o -name \*.h`
 
 %build
+mkdir bin
+ln -sf %{_bindir}/ld.bfd bin/ld
+export PATH=$PWD/bin:$PATH
+
 OS=Linux \
 MACHINE=%{_arch} \
 FLINT_LIB=libflint.so.%{sover} \
@@ -96,7 +100,7 @@ sh -x ./configure \
     --with-mpfr=%{_libdir} \
     --with-ntl=%{_libdir} \
     --disable-static \
-    CFLAGS="%{optflags}"
+    CFLAGS="%{optflags} -fuse-ld=bfd"
 make %{?_smp_mflags}
 
 # Build the documentation
@@ -112,13 +116,9 @@ pushd %{buildroot}%{_libdir}
 popd
 
 
-#%#check
-#make check FLINT_CPIMPORT=$PWD/qadic/CPimport.txt
-
-
-%post -p /sbin/ldconfig
-
-%postun -p /sbin/ldconfig
+%check
+export PATH=$PWD/bin:$PATH
+make check FLINT_CPIMPORT=$PWD/qadic/CPimport.txt
 
 
 %files
