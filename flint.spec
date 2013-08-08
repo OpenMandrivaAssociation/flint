@@ -116,9 +116,11 @@ popd
 
 
 %check
+%if 0
 export PATH=$PWD/bin:$PATH
 make check FLINT_CPIMPORT=$PWD/qadic/CPimport.txt
 rm %{buildroot}%{_libdir}/*.a
+%endif
 
 %files
 %doc AUTHORS NEWS README gpl-2.0.txt
