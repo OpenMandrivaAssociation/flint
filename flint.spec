@@ -99,7 +99,6 @@ sh -x ./configure \
     --with-gmp=%{_libdir} \
     --with-mpfr=%{_libdir} \
     --with-ntl=%{_libdir} \
-    --disable-static \
     CFLAGS="%{optflags} -fuse-ld=bfd"
 make %{?_smp_mflags}
 
@@ -119,7 +118,7 @@ popd
 %check
 export PATH=$PWD/bin:$PATH
 make check FLINT_CPIMPORT=$PWD/qadic/CPimport.txt
-
+rm %{buildroot}%{_libdir}/*.a
 
 %files
 %doc AUTHORS NEWS README gpl-2.0.txt
@@ -131,7 +130,3 @@ make check FLINT_CPIMPORT=$PWD/qadic/CPimport.txt
 %doc INSTALL doc/latex/%{name}-manual.pdf
 %{_includedir}/flint
 %{_libdir}/libflint.so
-
-
-%files static
-%{_libdir}/libflint.a
