@@ -99,6 +99,7 @@ sh -x ./configure \
     --with-gmp=%{_libdir} \
     --with-mpfr=%{_libdir} \
     --with-ntl=%{_libdir} \
+    --disable-static \
     CFLAGS="%{optflags} -fuse-ld=bfd"
 make %{?_smp_mflags}
 
@@ -119,7 +120,6 @@ popd
 %if 0
 export PATH=$PWD/bin:$PATH
 make check FLINT_CPIMPORT=$PWD/qadic/CPimport.txt
-rm %{buildroot}%{_libdir}/*.a
 %endif
 
 %files
