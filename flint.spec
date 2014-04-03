@@ -114,7 +114,6 @@ sh -x ./configure \
     CFLAGS="%{optflags}" \
     CXXFLAGS="%{optflags}" \
 %endif
-    --disable-static \
     LDFLAGS="-Wl,--as-needed $RPM_LD_FLAGS"
 make %{?_smp_mflags} verbose
 
@@ -126,6 +125,8 @@ make -C doc/latex manual CFLAGS="%{optflags} -I$PWD/doc/latex"
 make DESTDIR=%{buildroot} install
 
 ln -s libflint.so.%{sover} %{buildroot}%{_libdir}/libflint.so
+
+rm %{buildroot}%{_libdir}/libflint.a
 
 %check
 # Some of the C++ tests violate the alias analysis rules; i.e., pointers of
