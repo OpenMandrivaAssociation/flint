@@ -1,5 +1,5 @@
 %global with_snapshot 0
-%global with_check 1
+%global with_check 0
 
 %if %{with_snapshot}
 %global commit 4b383e23b39099f5ba09f7758023440e76277fc1
@@ -108,7 +108,7 @@ sh -x ./configure \
     --with-mpfr=%{_libdir} \
     --with-ntl=%{_libdir} \
     --enable-cxx \
-%ifarch %{arm}
+%ifarch %{arm} %{ix86}
     CFLAGS="%{optflags} -DHAVE_FAST_COMPILER=0 -fuse-ld=bfd" \
     CXXFLAGS="%{optflags} -DHAVE_FAST_COMPILER=0 -fuse-ld=bfd" \
 %else
