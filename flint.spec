@@ -1,4 +1,5 @@
 %global with_snapshot 0
+%global with_check 1
 
 %if %{with_snapshot}
 %global commit 4b383e23b39099f5ba09f7758023440e76277fc1
@@ -111,8 +112,8 @@ sh -x ./configure \
     CFLAGS="%{optflags} -DHAVE_FAST_COMPILER=0 -fuse-ld=bfd" \
     CXXFLAGS="%{optflags} -DHAVE_FAST_COMPILER=0 -fuse-ld=bfd" \
 %else
-    CFLAGS="%{optflags}" \
-    CXXFLAGS="%{optflags}" \
+    CFLAGS="%{optflags} -fuse-ld=bfd" \
+    CXXFLAGS="%{optflags} -fuse-ld=bfd" \
 %endif
     LDFLAGS="-Wl,--as-needed $RPM_LD_FLAGS"
 make %{?_smp_mflags} verbose
@@ -128,6 +129,7 @@ ln -s libflint.so.%{sover} %{buildroot}%{_libdir}/libflint.so
 
 rm %{buildroot}%{_libdir}/libflint.a
 
+%if %{with_check}
 %check
 # Some of the C++ tests violate the alias analysis rules; i.e., pointers of
 # different types point to the same object.  This leads to bad code being
@@ -137,6 +139,7 @@ rm %{buildroot}%{_libdir}/libflint.a
 sed -ri 's/C(XX)?FLAGS=.*/& -fno-strict-aliasing/' Makefile
 
 make check QUIET_CC= QUIET_CXX= QUIET_AR= CFLAGS="-L%{buildroot}%{_libdir} -lflint %{optflags}"
+%endif
 
 %files
 %doc AUTHORS NEWS README gpl-2.0.txt
