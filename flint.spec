@@ -13,7 +13,7 @@
 
 Name:           flint
 Version:        2.4.2
-Release:        1%{snapshot}%{?dist}
+Release:        2%{snapshot}%{?dist}
 Summary:        Fast Library for Number Theory
 License:        GPLv2+
 URL:            http://www.flintlib.org/
