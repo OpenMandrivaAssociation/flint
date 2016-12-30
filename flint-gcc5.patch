@@ -1,0 +1,16 @@
+diff -up ./flintxx/test/helpers.h.orig ./flintxx/test/helpers.h
+--- ./flintxx/test/helpers.h.orig	2015-08-13 10:16:22.000000000 -0600
++++ ./flintxx/test/helpers.h	2015-10-16 11:28:37.038369958 -0600
+@@ -55,9 +55,9 @@
+ #elif defined(__GNUC__)
+ // gcc 4.7.3 is good enough, supposedly all higher ones are too
+ #define HAVE_FAST_COMPILER \
+-    (__GNUC__ >= 4 && \
+-         ((__GNUC_MINOR__ == 7 && __GNUC_PATCHLEVEL__ >= 3) \
+-          || (__GNUC_MINOR__ > 7)))
++    (__GNUC__ > 4 || (__GNUC_ == 4 && \
++        (__GNUC_MINOR__ > 7 || (__GNUC_MINOR__ == 7 && \
++            __GNUC_PATCHLEVEL__ >= 3))))
+ #else
+ #define HAVE_FAST_COMPILER 0
+ #endif

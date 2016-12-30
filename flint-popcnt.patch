@@ -1,0 +1,62 @@
+--- fmpz/popcnt.c.orig	2015-08-13 10:16:22.000000000 -0600
++++ fmpz/popcnt.c	2016-04-23 14:50:25.442091489 -0600
+@@ -25,6 +25,54 @@ static __inline__ mp_bitcnt_t shortCount
+ }
+ #endif
+ 
++#ifdef __x86_64__
++#include <cpuid.h>
++
++static mp_bitcnt_t slow_fmpz_popcnt(const fmpz_t c)
++{
++        fmpz c1;
++        c1 = *c;
++        if(!COEFF_IS_MPZ(c1))
++        {
++                if(*c < 0) return 0;
++                else return __builtin_popcountl(*c);
++        } else
++        {
++                __mpz_struct *t = COEFF_TO_PTR(c1);
++                if(flint_mpz_cmp_si(t,0) < 0) return 0;
++                else return mpz_popcount(t);
++        }
++}
++
++static mp_bitcnt_t __attribute__((target ("popcnt")))
++fast_fmpz_popcnt(const fmpz_t c)
++{
++        fmpz c1;
++        c1 = *c;
++        if(!COEFF_IS_MPZ(c1))
++        {
++                if(*c < 0) return 0;
++                else return __builtin_popcountl(*c);
++        } else
++        {
++                __mpz_struct *t = COEFF_TO_PTR(c1);
++                if(flint_mpz_cmp_si(t,0) < 0) return 0;
++                else return mpz_popcount(t);
++        }
++}
++
++static void __attribute__((optimize ("O0")))
++(*resolve_fmpz_popcnt (void))(void) {
++        unsigned int eax, ebx, ecx, edx;
++        return (__get_cpuid(1, &eax, &ebx, &ecx, &edx) &&
++                (ecx & bit_POPCNT) != 0)
++                ? (void (*)(void))&fast_fmpz_popcnt
++                : (void (*)(void))&slow_fmpz_popcnt;
++}
++
++mp_bitcnt_t __attribute__((ifunc ("resolve_fmpz_popcnt")))
++fmpz_popcnt(const fmpz_t c);
++#else
+ mp_bitcnt_t fmpz_popcnt(const fmpz_t c)
+ {
+         fmpz c1;
+@@ -40,3 +88,4 @@ mp_bitcnt_t fmpz_popcnt(const fmpz_t c)
+                 else return mpz_popcount(t);
+         }
+ }
++#endif
