@@ -12,7 +12,7 @@ Version:        2.5.2
 Release:        1
 Summary:        Fast Library for Number Theory
 License:        GPLv2+
-URL:            http://www.flintlib.org/
+URL:            https://www.flintlib.org/
 Source0:        http://www.flintlib.org/%{name}-%{version}.tar.gz
 Source1:        https://github.com/%{hm_user}/%{hm_name}/archive/%{hm_commit}/%{hm_name}-%{hm_shortcommit}.tar.gz
 Source100:	%{name}.rpmlintrc
