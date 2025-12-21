@@ -27,6 +27,7 @@ Patch3:         %{name}-gcc5.patch
 # Use the popcnt instruction when available
 Patch4:         %{name}-popcnt.patch
 
+BuildRequires:	make
 BuildRequires:  libatlas-devel
 BuildRequires:  gc-devel
 BuildRequires:  gcc-c++
